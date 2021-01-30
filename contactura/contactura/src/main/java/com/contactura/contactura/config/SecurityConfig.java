@@ -1,6 +1,7 @@
 package com.contactura.contactura.config;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -20,34 +21,15 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter{
 	
 	@Override
 	protected void configure(HttpSecurity http) throws Exception{
-//		super.configure(http);
-		http.authorizeRequests()
-			.anyRequest()
-			.authenticated()
-			.and()
-			.httpBasic()
-			.and()
-			.csrf().disable();
+		http.csrf().disable().
+		authorizeRequests().antMatchers(HttpMethod.OPTIONS, "/**").permitAll().anyRequest().authenticated()
+		.and().httpBasic();
 	}
 	
-//	Este método foi criado para a autenticação de usuarios em memória
-//	@Autowired
-//	public void configureGlobal(AuthenticationManagerBuilder auth) throws Exception{
-//		auth.inMemoryAuthentication()
-//			.withUser("jessica").password("{noop}root").roles("USER")
-//			.and()
-//			.withUser("ADMIN").password("{noop}root").roles("USER", "ADMIN");
-//	}
 	
 	@Override
 	protected void configure(AuthenticationManagerBuilder auth) throws Exception{
 		auth.userDetailsService(customUserDetailService).passwordEncoder(new BCryptPasswordEncoder());
 	}
-	
-	
-	
-	
-	
-	
 	
 }
